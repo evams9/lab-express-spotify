@@ -1,0 +1,19 @@
+<h1>Results for: "{{search}}"</h1>
+
+<div class="list">
+  {{#each artists}}
+    <div class="card">
+      <h3>{{this.name}}</h3>
+      {{#if this.images}} 
+        <img src="{{this.images.url}}" alt="">
+      {{else}}
+        <img src="/images/artist-list-default.jpg" alt="">
+      {{/if}}
+      <a href="/albums/someArtistIdGoesHere">View Albums</a>
+    </div>
+  {{else}}
+    <div>
+      Sorry, there are no artists for your search
+    </div>
+  {{/each}}
+</div>
