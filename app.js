@@ -13,6 +13,8 @@ app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 
+
+
 // setting the spotify-api goes here:
 
 const spotifyApi = new SpotifyWebApi({
@@ -33,24 +35,25 @@ app.get('/', (req,res) => {
   res.render('index') 
 
 })
-app.get('/artist-search-results', (req,res) => {
- spotifyApi.searchArtists(req.query.search)
+app.get('/artist-search', (req,res) => {
+  console.log(req.query)
+  const {artist} = req.query;
+  spotifyApi.searchArtists(artist)
   .then(data => {
-    console.log('The received data from the API: ', data.body);
-    res.render('artists', {
-      search: req.query.search,
-      artists: data.body.artist.items,
-    })// ----> 'HERE WHAT WE WANT TO DO AFTER RECEIVING THE DATA FROM THE API'
+    console.log('The received data from the API: ', data.body)
+    const {items} = data.body.artists
+    
+    res.render('artist-search-results', {items});
+  
   })
   .catch(err => console.log('The error while searching artists occurred: ', err));
 })
 
-  app.get('/albums/:artistId', (req, res, next) => {
-    spotifyApi.getArtistAlbums(req.params.artistId)
+  app.get('/albums/:artistId', (req, res) => {
+    const {artistId} = req.params;
+    spotifyApi.getArtistAlbums(artistId)
     .then(data => {
-      res.render('albums', {
-        albums: data.body.items
-      })
+      res.render('albums', {albums: data.body.items})
     })
     .catch(err => {
       console.log(err)
@@ -61,11 +64,10 @@ app.get('/artist-search-results', (req,res) => {
   });
 
   app.get('/tracks/:albumId', (req,res)=> {
-    spotifyApi.getAlbumTracks(req.params.albumId)
+    const {albumId} = req.params;
+    spotifyApi.getAlbumTracks(albumId)
       .then(data => {
-        res.render('tracks', {
-          tracks: data.body.items
-        })
+        res.render('tracks', { tracks: data.body.items})
       })
       .catch(err => {
         console.log(err)
